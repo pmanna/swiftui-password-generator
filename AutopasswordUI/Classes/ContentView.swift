@@ -15,12 +15,13 @@ struct ContentView: View {
 	
 	var resultPassword: String {
 		guard pinFactor.count > 3 else { return "PIN must be >= 4 chars" }
-		guard urlString.count > 9, let urlFactor = URL(string: urlString) else {
-			return "URL must be valid >= 10 chars"
+		guard urlString.count > 9, let urlFactor = URL(string: urlString),
+              let host = urlFactor.host, host.count > 3 else {
+			return "URL must be valid & >= 10 chars"
 		}
 		guard userEmail.count > 4 else { return("User name must be >= 5 chars") }
 		
-		let completeSeed	= pinFactor + (urlFactor.host ?? "") + userEmail
+		let completeSeed	= pinFactor + host + userEmail
 		
 		if let hashValue = Base64.SHA256(completeSeed), hashValue.count >= 16 {
 			let index1  = hashValue.index(hashValue.startIndex, offsetBy: 4)
